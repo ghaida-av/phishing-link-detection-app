@@ -14,9 +14,13 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
-    private val BACKEND_URL = "http://10.0.2.2:5000/predict"
-    // For physical device: Change to your computer's IP
+    // IMPORTANT: Update this for your setup!
+    // For Android Emulator: "http://10.0.2.2:5000/predict"
+    // For Physical Android Phone: "http://YOUR_COMPUTER_IP:5000/predict"
     // Example: "http://192.168.1.100:5000/predict"
+    // To find your IP: Mac: ifconfig | grep "inet " | grep -v 127.0.0.1
+    //                  Windows: ipconfig
+    private val BACKEND_URL = "http://10.0.2.2:5000/predict"
 
     private lateinit var urlInput: EditText
     private lateinit var checkButton: Button
