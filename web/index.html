@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Phishing Link Detector</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="url"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            -webkit-appearance: none;
+        }
+
+        input[type="url"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            text-align: center;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result.phishing {
+            background: #fee;
+            border: 2px solid #fcc;
+        }
+
+        .result.legitimate {
+            background: #efe;
+            border: 2px solid #cfc;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .result-icon {
+            font-size: 32px;
+            margin-right: 10px;
+        }
+
+        .result-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .result.phishing .result-title {
+            color: #c00;
+        }
+
+        .result.legitimate .result-title {
+            color: #0a0;
+        }
+
+        .score {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .result.phishing .score {
+            color: #c00;
+        }
+
+        .result.legitimate .score {
+            color: #0a0;
+        }
+
+        .confidence {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .reasons {
+            margin-top: 15px;
+        }
+
+        .reasons-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .reasons-list {
+            list-style: none;
+        }
+
+        .reasons-list li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            color: #555;
+        }
+
+        .reasons-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .error {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fee;
+            border: 2px solid #fcc;
+            border-radius: 10px;
+            color: #c00;
+            display: none;
+        }
+
+        .url-display {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+            word-break: break-all;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            input[type="url"], button {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ Phishing Detector</h1>
+        <p class="subtitle">Powered by Machine Learning</p>
+
+        <div class="input-group">
+            <label for="urlInput">Enter URL to Check</label>
+            <input 
+                type="url" 
+                id="urlInput" 
+                placeholder="https://example.com"
+                autocomplete="url"
+            >
+        </div>
+
+        <button id="checkButton" onclick="checkUrl()">Check URL</button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px; color: #666;">Analyzing URL...</p>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="result" id="result">
+            <div class="result-header">
+                <span class="result-icon" id="resultIcon">⚠️</span>
+                <span class="result-title" id="resultTitle">Result</span>
+            </div>
+            <div class="score" id="score"></div>
+            <div class="confidence" id="confidence"></div>
+            <div class="url-display" id="urlDisplay"></div>
+            <div class="reasons">
+                <div class="reasons-title">Analysis Details:</div>
+                <ul class="reasons-list" id="reasonsList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Backend URL - Update this to your backend server
+        // For local testing: http://localhost:5000/predict
+        // For production: https://your-backend-url.com/predict
+        const BACKEND_URL = 'http://localhost:5000/predict';
+        
+        // For iPhone to access computer's backend, use your computer's IP:
+        // const BACKEND_URL = 'http://YOUR_COMPUTER_IP:5000/predict';
+
+        function checkUrl() {
+            const urlInput = document.getElementById('urlInput');
+            const checkButton = document.getElementById('checkButton');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const error = document.getElementById('error');
+            
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                showError('Please enter a URL to check');
+                return;
+            }
+
+            // Hide previous results
+            result.style.display = 'none';
+            error.style.display = 'none';
+            
+            // Show loading
+            loading.style.display = 'block';
+            checkButton.disabled = true;
+            checkButton.textContent = 'Checking...';
+
+            // Prepare request
+            const requestBody = JSON.stringify({ url: url });
+            
+            // Make API call
+            fetch(BACKEND_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: requestBody
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.error || `Server error: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                displayResult(data);
+            })
+            .catch(err => {
+                showError('Network error: ' + err.message + 
+                    '\n\nMake sure the backend server is running on port 5000.');
+            })
+            .finally(() => {
+                loading.style.display = 'none';
+                checkButton.disabled = false;
+                checkButton.textContent = 'Check URL';
+            });
+        }
+
+        function displayResult(data) {
+            const result = document.getElementById('result');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const score = document.getElementById('score');
+            const confidence = document.getElementById('confidence');
+            const urlDisplay = document.getElementById('urlDisplay');
+            const reasonsList = document.getElementById('reasonsList');
+
+            const isPhishing = data.verdict === 'phishing';
+            const scorePercent = Math.round(data.score * 100);
+
+            // Set result class
+            result.className = 'result ' + (isPhishing ? 'phishing' : 'legitimate');
+
+            // Set icon and title
+            resultIcon.textContent = isPhishing ? '⚠️' : '✅';
+            resultTitle.textContent = data.verdict.charAt(0).toUpperCase() + data.verdict.slice(1);
+
+            // Set score
+            score.textContent = `Risk Score: ${scorePercent}%`;
+
+            // Set confidence
+            confidence.textContent = `Confidence: ${data.confidence.charAt(0).toUpperCase() + data.confidence.slice(1)}`;
+
+            // Set URL
+            urlDisplay.textContent = `Checked: ${data.url}`;
+
+            // Set reasons
+            reasonsList.innerHTML = '';
+            if (data.reasons && data.reasons.length > 0) {
+                data.reasons.forEach(reason => {
+                    const li = document.createElement('li');
+                    li.textContent = reason;
+                    reasonsList.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.textContent = 'Analysis completed';
+                reasonsList.appendChild(li);
+            }
+
+            // Show result
+            result.style.display = 'block';
+            
+            // Scroll to result
+            result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function showError(message) {
+            const error = document.getElementById('error');
+            error.textContent = message;
+            error.style.display = 'block';
+            error.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkUrl();
+            }
+        });
+    </script>
+</body>
+</html>
+
