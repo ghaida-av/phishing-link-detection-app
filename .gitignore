@@ -137,3 +137,47 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.pkl
+*.pickle
+*.egg-info/
+dist/
+build/
+
+# Android
+*.iml
+.gradle/
+local.properties
+.idea/
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+bin/
+gen/
+out/
+.gradle
+build/
+captures/
+.externalNativeBuild
+.cxx
+*.keystore
+!debug.keystore
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Model files (optional - uncomment if you want to exclude trained models)
+# backend/phishing_model.pkl

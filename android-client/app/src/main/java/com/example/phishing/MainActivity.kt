@@ -1,8 +1,10 @@
 package com.example.phishing
 
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import okhttp3.*
@@ -11,68 +13,114 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
-    // change this to your backend URL when deployed (e.g., https://your-service.com/predict)
-    private val BACKEND_URL = "http://10.0.2.2:5000/predict" // for Android emulator to reach localhost of host machine
+    private val BACKEND_URL = "http://10.0.2.2:5000/predict"
+    // For physical device: Change to your computer's IP
+    // Example: "http://192.168.1.100:5000/predict"
+
+    private lateinit var urlInput: EditText
+    private lateinit var checkButton: Button
+    private lateinit var progressBar: ProgressBar
+    private lateinit var resultText: TextView
+    private lateinit var errorText: TextView
+
+    private val client = OkHttpClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val urlInput = findViewById<EditText>(R.id.urlInput)
-        val checkButton = findViewById<Button>(R.id.checkButton)
-        val resultText = findViewById<TextView>(R.id.resultText)
-
-        val client = OkHttpClient()
+        urlInput = findViewById(R.id.urlInput)
+        checkButton = findViewById(R.id.checkButton)
+        progressBar = findViewById(R.id.progressBar)
+        resultText = findViewById(R.id.resultText)
+        errorText = findViewById(R.id.errorText)
 
         checkButton.setOnClickListener {
             val url = urlInput.text.toString().trim()
             if (url.isEmpty()) {
-                resultText.text = "Please enter a URL"
+                showError("Please enter a URL")
                 return@setOnClickListener
             }
+            checkUrl(url)
+        }
+    }
 
-            val json = JSONObject()
-            json.put("url", url)
-            val body = RequestBody.create(MediaType.get("application/json; charset=utf-8"), json.toString())
+    private fun checkUrl(url: String) {
+        errorText.visibility = android.view.View.GONE
+        resultText.text = ""
+        progressBar.visibility = android.view.View.VISIBLE
+        checkButton.isEnabled = false
+        checkButton.text = "Checking..."
 
-            val request = Request.Builder()
-                .url(BACKEND_URL)
-                .post(body)
-                .build()
+        val json = JSONObject()
+        json.put("url", url)
+        val body = RequestBody.create(
+            MediaType.get("application/json; charset=utf-8"),
+            json.toString()
+        )
 
-            client.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    runOnUiThread {
-                        resultText.text = "Network error: " + e.localizedMessage
-                    }
+        val request = Request.Builder()
+            .url(BACKEND_URL)
+            .post(body)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    progressBar.visibility = android.view.View.GONE
+                    checkButton.isEnabled = true
+                    checkButton.text = "Check URL"
+                    showError("Network error. Make sure backend is running on port 5000")
                 }
+            }
 
-                override fun onResponse(call: Call, response: Response) {
-                    val respBody = response.body()?.string()
-                    runOnUiThread {
-                        if (!response.isSuccessful) {
-                            resultText.text = "Error: $respBody"
-                        } else {
-                            try {
-                                val obj = JSONObject(respBody)
-                                val verdict = obj.optString("verdict")
-                                val score = obj.optDouble("score")
-                                val reasons = obj.optJSONArray("reasons")
-                                val reasonStr = StringBuilder()
-                                if (reasons != null) {
-                                    for (i in 0 until reasons.length()) {
-                                        reasonStr.append("- ").append(reasons.getString(i)).append("\n")
-                                    }
+            override fun onResponse(call: Call, response: Response) {
+                val respBody = response.body()?.string()
+                runOnUiThread {
+                    progressBar.visibility = android.view.View.GONE
+                    checkButton.isEnabled = true
+                    checkButton.text = "Check URL"
+
+                    if (!response.isSuccessful) {
+                        showError("Error: ${response.code}")
+                    } else {
+                        try {
+                            val obj = JSONObject(respBody ?: "{}")
+                            val verdict = obj.optString("verdict", "unknown")
+                            val score = obj.optDouble("score", 0.0)
+                            val reasons = obj.optJSONArray("reasons")
+
+                            val scorePercent = (score * 100).toInt()
+                            val verdictText = verdict.replaceFirstChar { it.uppercase() }
+                            
+                            val result = StringBuilder()
+                            result.append("Result: $verdictText\n")
+                            result.append("Risk Score: $scorePercent%\n\n")
+                            
+                            if (reasons != null && reasons.length() > 0) {
+                                result.append("Reasons:\n")
+                                for (i in 0 until reasons.length()) {
+                                    result.append("• ${reasons.getString(i)}\n")
                                 }
-                                resultText.text = "Verdict: $verdict\nScore: $score\nReasons:\n$reasonStr"
-                            } catch (e: Exception) {
-                                resultText.text = "Parsing error: ${e.localizedMessage}"
                             }
+
+                            resultText.text = result.toString()
+                            resultText.setTextColor(
+                                if (verdict == "phishing") Color.RED else Color.GREEN
+                            )
+                        } catch (e: Exception) {
+                            showError("Error parsing response")
                         }
                     }
                 }
-            })
-        }
+            }
+        })
+    }
+
+    private fun showError(message: String) {
+        errorText.text = message
+        errorText.visibility = android.view.View.VISIBLE
+        resultText.text = ""
     }
 }
 
