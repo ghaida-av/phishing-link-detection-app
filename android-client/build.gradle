@@ -1,4 +1,4 @@
-// Top-level build file
+
 buildscript {
     repositories {
         google()
@@ -10,8 +10,7 @@ buildscript {
     }
 }
 
-// Repositories are managed in settings.gradle
-// No need for allprojects block
+
 
 task clean(type: Delete) {
     delete rootProject.buildDir
