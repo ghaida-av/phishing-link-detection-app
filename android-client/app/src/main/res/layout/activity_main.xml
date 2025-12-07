@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="#FAFAFA">
+    android:background="#F9F9F9">
 
     <TextView
         android:id="@+id/titleText"
@@ -14,24 +14,24 @@
         android:textSize="22sp"
         android:textStyle="bold"
         android:layout_gravity="center_horizontal"
-        android:paddingBottom="20dp"/>
+        android:paddingBottom="20dp" />
 
     <EditText
         android:id="@+id/urlInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter URL"
+        android:hint="Enter the URL "
         android:inputType="textUri"
         android:padding="12dp"
-        android:background="@android:drawable/editbox_background"
-        android:textSize="16sp"/>
+        android:background="@android:drawable/editbox_background_normal"
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/checkButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Check"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp" />
 
     <TextView
         android:id="@+id/resultText"
@@ -40,8 +40,6 @@
         android:layout_marginTop="24dp"
         android:text="Result will appear here"
         android:textSize="16sp"
-        android:textColor="#333"/>
+        android:textColor="#222" />
 
 </LinearLayout>
-
-
