@@ -3,7 +3,7 @@ from flask_cors import CORS
 from detector import ml_score
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for Android app
+CORS(app) 
 
 @app.route('/')
 def index():
@@ -24,7 +24,6 @@ def predict():
         if not url:
             return jsonify({"error": "URL cannot be empty"}), 400
         
-        # Add http:// if no scheme is present
         if not url.startswith(('http://', 'https://')):
             url = 'http://' + url
         
@@ -45,7 +44,9 @@ def predict():
 def health():
     return jsonify({"status": "healthy"}), 200
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5001, debug=True)
+
+
 
 
