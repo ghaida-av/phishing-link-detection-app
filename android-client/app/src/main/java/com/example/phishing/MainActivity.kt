@@ -13,7 +13,6 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
-
     private val BACKEND_URL = "http://10.0.2.2:5001/predict"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         val urlInput = findViewById<EditText>(R.id.urlInput)
         val checkButton = findViewById<Button>(R.id.checkButton)
         val resultText = findViewById<TextView>(R.id.resultText)
+
         val client = OkHttpClient()
 
         checkButton.setOnClickListener {
@@ -33,9 +33,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             resultText.text = "Checking..."
-
-
             val json = JSONObject().apply { put("url", url) }
+
+
             val mediaType = "application/json; charset=utf-8".toMediaType()
             val body = json.toString().toRequestBody(mediaType)
 
@@ -73,4 +73,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
