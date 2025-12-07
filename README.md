@@ -1,7 +1,7 @@
 # Phishing Link Detection App
 
-A simple Android app to check whether a URL is phishing or legitimate using a Python Flask backend.  
-This project is designed to be simple, readable, and student-friendly.
+A simple Android app to check whether a URL is phishing or safe using a Python Flask backend.  
+
 
 ---
 
