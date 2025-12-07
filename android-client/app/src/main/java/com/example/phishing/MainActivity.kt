@@ -13,7 +13,8 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
-    private val BACKEND_URL = "http://10.0.2.2:5001/predict"
+  private val BACKEND_URL = "https://jewell-unseconded-recurringly.ngrok-free.d/predict"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
