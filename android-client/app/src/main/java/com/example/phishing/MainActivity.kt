@@ -22,7 +22,6 @@ class MainActivity : AppCompatActivity() {
         val urlInput = findViewById<EditText>(R.id.urlInput)
         val checkButton = findViewById<Button>(R.id.checkButton)
         val resultText = findViewById<TextView>(R.id.resultText)
-
         val client = OkHttpClient()
 
         checkButton.setOnClickListener {
@@ -35,9 +34,10 @@ class MainActivity : AppCompatActivity() {
             resultText.text = "Checking..."
             val json = JSONObject().apply { put("url", url) }
 
-
+            // ---- FIXED OKHTTP CALLS ----
             val mediaType = "application/json; charset=utf-8".toMediaType()
             val body = json.toString().toRequestBody(mediaType)
+            // ----------------------------
 
             val request = Request.Builder()
                 .url(BACKEND_URL)
@@ -46,13 +46,11 @@ class MainActivity : AppCompatActivity() {
 
             client.newCall(request).enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
-                    runOnUiThread {
-                        resultText.text = "❌ Network error: ${e.message}"
-                    }
+                    runOnUiThread { resultText.text = "❌ Network error: ${e.message}" }
                 }
 
                 override fun onResponse(call: Call, response: Response) {
-                    val respBody = response.body?.string()
+                    val respBody = response.body?.string()   
                     runOnUiThread {
                         if (!response.isSuccessful || respBody.isNullOrEmpty()) {
                             resultText.text = "❌ Server error."
@@ -61,8 +59,7 @@ class MainActivity : AppCompatActivity() {
                                 val obj = JSONObject(respBody)
                                 val verdict = obj.optString("verdict")
                                 val score = obj.optDouble("score")
-                                resultText.text =
-                                    "✅ Verdict: $verdict\n🔢 Score: $score"
+                                resultText.text = "✅ Verdict: $verdict\n🔢 Score: $score"
                             } catch (e: Exception) {
                                 resultText.text = "⚠️ Parsing error."
                             }
