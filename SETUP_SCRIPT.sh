@@ -1,105 +1,92 @@
 #!/bin/bash
 
-echo "🚀 GitHub Setup Helper Script"
-echo "=============================="
+echo "🚀 GitHub Setup Script"
+echo "======================"
 echo ""
 
-# Check if git is installed
+# 1. Check if Git is installed
 if ! command -v git &> /dev/null; then
-    echo "❌ Git is not installed."
-    echo "Please install Git first: https://git-scm.com/downloads"
+    echo "❌ Git not found. Install it from: https://git-scm.com/downloads"
     exit 1
 fi
-
 echo "✅ Git is installed"
 echo ""
 
-# Check if already a git repository
+# 2. Check if inside a Git repo
 if [ -d ".git" ]; then
-    echo "✅ Git repository already initialized"
+    echo "✅ Git repo already initialized"
     git status --short | head -5
-    echo ""
 else
-    echo "📦 Initializing git repository..."
+    echo "📦 Creating new Git repo..."
     git init
-    echo "✅ Git repository initialized"
-    echo ""
+    echo "✅ Git repo created"
 fi
+echo ""
 
-# Check if remote is set
+# 3. Check for remote
 REMOTE=$(git remote get-url origin 2>/dev/null)
-
 if [ -z "$REMOTE" ]; then
-    echo "⚠️  No GitHub remote configured"
-    echo ""
-    echo "To connect to GitHub:"
-    echo "1. Create a repository on GitHub.com"
-    echo "2. Then run:"
-    echo "   git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git"
-    echo "   git push -u origin main"
-    echo ""
+    echo "⚠️  No GitHub remote found."
+    echo "Run these commands after creating a repo on GitHub:"
+    echo "  git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git"
+    echo "  git push -u origin main"
 else
-    echo "✅ GitHub remote configured: $REMOTE"
-    echo ""
+    echo "✅ Remote connected: $REMOTE"
 fi
+echo ""
 
-# Check if files are committed
+# 4. Check commits
 if [ -z "$(git log --oneline -1 2>/dev/null)" ]; then
-    echo "📝 No commits yet. Ready to commit files..."
-    echo ""
-    echo "To commit and push:"
+    echo "📝 No commits yet."
+    echo "Run:"
     echo "  git add ."
     echo "  git commit -m 'Initial commit'"
     echo "  git push -u origin main"
-    echo ""
 else
-    echo "✅ Repository has commits"
-    LAST_COMMIT=$(git log --oneline -1)
-    echo "   Latest: $LAST_COMMIT"
-    echo ""
+    echo "✅ Commits found:"
+    git log --oneline -1
 fi
+echo ""
 
-# Check for uncommitted changes
+# 5. Check uncommitted changes
 if [ -n "$(git status --porcelain)" ]; then
-    echo "📋 You have uncommitted changes:"
+    echo "📋 Uncommitted changes:"
     git status --short | head -10
     echo ""
-    echo "To commit them:"
+    echo "To save changes:"
     echo "  git add ."
     echo "  git commit -m 'Update files'"
     echo "  git push"
-    echo ""
 else
-    echo "✅ All changes are committed"
-    echo ""
+    echo "✅ All changes are saved"
 fi
+echo ""
 
-# Check if GitHub Actions workflow exists
+# 6. Check GitHub Actions workflow
 if [ -f ".github/workflows/build-apk.yml" ]; then
-    echo "✅ GitHub Actions workflow file exists"
-    echo "   Location: .github/workflows/build-apk.yml"
-    echo ""
+    echo "✅ GitHub Actions workflow found at:"
+    echo "   .github/workflows/build-apk.yml"
 else
-    echo "⚠️  GitHub Actions workflow not found"
-    echo ""
+    echo "⚠️  No GitHub Actions workflow found"
 fi
+echo ""
 
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "📖 Next Steps:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo ""
-echo "1. Create repository on GitHub.com"
-echo "2. Connect it:"
+echo "━━━━━━━━━━━━━━━━━━━━━━"
+echo "📘 Next Steps"
+echo "━━━━━━━━━━━━━━━━━━━━━━"
+echo "1. Create a new repo on GitHub."
+echo "2. Connect it with:"
 echo "   git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git"
-echo ""
-echo "3. Push code:"
+echo "3. Push your code:"
 echo "   git add ."
 echo "   git commit -m 'Initial commit'"
 echo "   git push -u origin main"
-echo ""
-echo "4. Go to GitHub → Actions tab → Run workflow"
+echo "4. Go to GitHub → Actions → Run workflow"
 echo "5. Download APK from Artifacts"
 echo ""
-echo "📚 See GITHUB_SETUP_GUIDE.md for detailed instructions"
-echo ""
+
+echo "✅ Setup Complete!"
+
+
+
 
