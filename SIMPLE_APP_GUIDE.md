@@ -1,4 +1,4 @@
-# Simple Phishing Detection App - Ready to Build!
+#  Phishing Detection App 
 
 ## ✅ What I Did
 
