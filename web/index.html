@@ -28,11 +28,11 @@
       }
       resultEl.textContent = "Checking...";
       try {
-        const resp = await fetch("https://your-flask-backend.onrender.com/predict", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url })
-        });
+        const resp = await fetch("http://localhost:5001/predict", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ url })
+});
         const data = await resp.json();
         resultEl.textContent = JSON.stringify(data, null, 2);
       } catch (err) {
