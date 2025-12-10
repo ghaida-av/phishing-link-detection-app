@@ -13,10 +13,10 @@
 
 ## Project Overview
 
-This is a **Phishing Link Detection App** that uses **Machine Learning** to analyze URLs and determine if they are phishing attempts or legitimate websites.
+ **Phishing Link Detection App**  uses **Machine Learning** to  determine if URL is phishing  or safe websites.
 
 ### Architecture
-- **Backend**: Flask API with ML model (Random Forest Classifier)
+- **Backend**: Flask API with ML model 
 - **Frontend**: Android app (Kotlin)
 - **Build System**: GitHub Actions for automated APK building
 
@@ -27,7 +27,7 @@ This is a **Phishing Link Detection App** that uses **Machine Learning** to anal
 ### 1. Machine Learning Model (`backend/detector.py`)
 
 #### Purpose
-Analyzes URLs and extracts features to predict if they are phishing attempts.
+Analyzes URLs and extracts features to predict if they are phishing .
 
 #### Key Functions
 
@@ -53,7 +53,7 @@ def extract_features_vector(url):
     return np.array(features)
 ```
 
-**Why**: Extracts 14+ features from URLs that ML models use to detect phishing patterns.
+**Why**: Extracts  features from URLs that ML models use to detect phishing patterns.
 
 **`ml_predict(url)`**
 ```python
@@ -71,7 +71,7 @@ def ml_predict(url):
     return float(phishing_prob), int(prediction)
 ```
 
-**Why**: Uses the trained Random Forest model to predict phishing probability (0.0 to 1.0).
+**Why**: Uses  to predict phishing probability (0.0 to 1.0).
 
 **`ml_score(url)`**
 ```python
