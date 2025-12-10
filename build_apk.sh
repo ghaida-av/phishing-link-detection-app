@@ -2,19 +2,18 @@
 
 show_android_studio_instructions() {
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "💡 RECOMMENDED: Use Android Studio (handles Java versions automatically)"
+    echo "💡  Use Android Studio "
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
     echo "📋 Simple Steps:"
     echo "   1. Open Android Studio"
     echo "   2. File → Open → Select 'android-client' folder"
     echo "   3. Wait for Gradle sync to finish"
-    echo "   4. Press Cmd+F9 (Mac) or Ctrl+F9 (Windows)"
-    echo "      OR: Build → Make Project"
+    echo "   4. Press Cmd+F9 (Mac) "
     echo "   5. Find APK: Right-click 'app' folder → Show in Finder"
     echo "      Navigate to: build/outputs/apk/debug/app-debug.apk"
     echo ""
-    echo "📖 See BUILD_WITH_ANDROID_STUDIO.md for detailed instructions"
+    echo "📖 See ANDROID_PHONE_SETUP.md for detailed instructions"
     echo ""
 }
 
@@ -34,7 +33,7 @@ fi
 # Make gradlew executable
 chmod +x ./gradlew
 
-echo "📦 Building APK (this may take a few minutes)..."
+echo "📦 Building APK  may take a few minutes"
 echo ""
 
 # Build the APK
@@ -44,7 +43,7 @@ if [ $? -eq 0 ]; then
     echo ""
     echo "✅ BUILD SUCCESSFUL!"
     echo ""
-    echo "📱 Your APK is located at:"
+    echo "📱  APK is located at:"
     echo "   $(pwd)/app/build/outputs/apk/debug/app-debug.apk"
     echo ""
     
@@ -55,12 +54,12 @@ if [ $? -eq 0 ]; then
     fi
     
     echo "📲 To install on your phone:"
-    echo "   1. Copy app-debug.apk to your phone"
+    echo "   1. Copy app-debug.apk to  phone"
     echo "   2. Enable 'Install from Unknown Sources' in Settings"
     echo "   3. Open the APK file and install"
 else
     echo ""
-    echo "❌ Command-line build failed (likely Java version issue)."
+    echo "❌ Command-line build failed "
     echo ""
     show_android_studio_instructions
 fi
