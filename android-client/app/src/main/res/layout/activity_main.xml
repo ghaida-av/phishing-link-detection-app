@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
     android:background="#F9F9F9">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
 
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Phishing Link Detector"
+        android:text="Phishing Link Detection App"
         android:textSize="22sp"
         android:textStyle="bold"
         android:layout_gravity="center_horizontal"
@@ -20,7 +24,7 @@
         android:id="@+id/urlInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter the URL "
+        android:hint="Enter the URL"
         android:inputType="textUri"
         android:padding="12dp"
         android:background="@android:drawable/editbox_background_normal"
@@ -33,6 +37,20 @@
         android:text="Check"
         android:layout_marginTop="16dp" />
 
+    <Button
+        android:id="@+id/copyButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Copy Result"
+        android:layout_marginTop="10dp" />
+
+    <Button
+        android:id="@+id/shareButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share Result"
+        android:layout_marginTop="10dp" />
+
     <TextView
         android:id="@+id/resultText"
         android:layout_width="match_parent"
@@ -42,4 +60,15 @@
         android:textSize="16sp"
         android:textColor="#222" />
 
+    <TextView
+        android:id="@+id/historyText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Last checked: none"
+        android:textSize="14sp"
+        android:textColor="#555" />
+
 </LinearLayout>
+</ScrollView>
+
