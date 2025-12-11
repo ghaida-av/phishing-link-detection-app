@@ -66,18 +66,13 @@ class MainActivity : AppCompatActivity() {
                         if (!response.isSuccessful || respBody.isNullOrEmpty()) {
                             resultText.text = "Server error."
                         } else {
-                            try {
+                             try {
                                 val obj = JSONObject(respBody)
-                                val verdict = obj.optString("verdict")
-                                val score = obj.optDouble("score")
-                                resultText.text = " Verdict: $verdict\n🔢 Score: $score"
-
+                                val result = obj.optString("safe")
                                
-                                prefs.edit().putString("last_url", url).apply()
-                                historyText.text = "Last checked: $url"
-
+                                resultText.text = "✅ Result: $verdict\n
                             } catch (e: Exception) {
-                                resultText.text = "Parsing error."
+                                resultText.text = "⚠️ Parsing error."
                             }
                         }
                     }
