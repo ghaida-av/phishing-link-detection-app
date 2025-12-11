@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                                 val obj = JSONObject(respBody)
                                 val result = obj.optString("safe")
                                
-                                resultText.text = "✅ Result: $verdict\n
+                                resultText.text = "✅ Result:" $verdict\n
                             } catch (e: Exception) {
                                 resultText.text = "⚠️ Parsing error."
                             }
