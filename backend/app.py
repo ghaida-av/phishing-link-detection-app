@@ -1,51 +1,42 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from detector import ml_score
 
 app = Flask(__name__)
-CORS(app) 
+CORS(app)  # allow Android + Web + iPhone access
 
-@app.route('/')
-def index():
-    return jsonify({
-        "message": "Phishing Link Detection API", 
-        "version": "2.0",
-        "model": "ML-based Random Forest"
-    })
+# Simple phishing check (NO ML)
+def check_url(url):
+    phishing_words = ["login", "verify", "bank", "secure", "update", "account"]
+    for word in phishing_words:
+        if word in url.lower():
+            return "Phishing link ❌"
+    return "Safe ✅"
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    try:
-        data = request.get_json(silent=True)
-        if not data or 'url' not in data:
-            return jsonify({"error": "send JSON with field 'url'"}), 400
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({"message": "Phishing Link Checker API"})
 
-        url = data['url'].strip()
-        if not url:
-            return jsonify({"error": "URL cannot be empty"}), 400
-        
-        if not url.startswith(('http://', 'https://')):
-            url = 'http://' + url
-        
-        score, reasons = ml_score(url)
-        verdict = "phishing" if score >= 0.5 else "legitimate"
-        
-        return jsonify({
-            "url": url,
-            "score": score,
-            "verdict": verdict,
-            "reasons": reasons,
-            "confidence": "high" if abs(score - 0.5) > 0.3 else "medium"
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+@app.route("/check", methods=["POST"])
+def check():
+    data = request.get_json()
 
-@app.route('/health', methods=['GET'])
-def health():
-    return jsonify({"status": "healthy"}), 200
+    if not data or "url" not in data:
+        return jsonify({"result": "Phishing link ❌"})
+
+    url = data["url"].strip()
+
+    if not url:
+        return jsonify({"result": "Phishing link ❌"})
+
+    if not url.startswith(("http://", "https://")):
+        url = "http://" + url
+
+    result = check_url(url)
+    return jsonify({"result": result})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001, debug=True)
+    app.run(host="0.0.0.0", port=5000)
+
 
 
 
