@@ -5,7 +5,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -16,8 +15,7 @@ import java.io.IOException
 class MainActivity : AppCompatActivity() {
 
     
-    private val BACKEND_URL = "http://10.0.2.2:5001/predict"
-
+    private val BACKEND_URL = "https://your-global-backend-host/predict"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,21 +23,14 @@ class MainActivity : AppCompatActivity() {
 
         val urlInput = findViewById<EditText>(R.id.urlInput)
         val checkButton = findViewById<Button>(R.id.checkButton)
-        val copyButton = findViewById<Button>(R.id.copyButton)
-        val shareButton = findViewById<Button>(R.id.shareButton)
         val resultText = findViewById<TextView>(R.id.resultText)
-        val historyText = findViewById<TextView>(R.id.historyText)
-        val client = OkHttpClient()
-        val prefs = getSharedPreferences("history", MODE_PRIVATE)
 
-        
-        val lastUrl = prefs.getString("last_url", "none")
-        historyText.text = "Last checked: $lastUrl"
+        val client = OkHttpClient()
 
         checkButton.setOnClickListener {
             val url = urlInput.text.toString().trim()
             if (url.isEmpty()) {
-                resultText.text = "Enter the URL"
+                resultText.text = "Please enter a URL"
                 return@setOnClickListener
             }
 
@@ -56,7 +47,7 @@ class MainActivity : AppCompatActivity() {
             client.newCall(request).enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
                     runOnUiThread {
-                        resultText.text = " Network error: ${e.message}"
+                        resultText.text = "⚠️ Network error"
                     }
                 }
 
@@ -64,48 +55,28 @@ class MainActivity : AppCompatActivity() {
                     val respBody = response.body?.string()
                     runOnUiThread {
                         if (!response.isSuccessful || respBody.isNullOrEmpty()) {
-                            resultText.text = "Server error."
+                            resultText.text = "⚠️ Server error"
                         } else {
-                             try {
+                            try {
                                 val obj = JSONObject(respBody)
-                                val result = obj.optString("safe")
-                               
-                                resultText.text = "✅ Result:" $verdict\n
+                                val verdict = obj.optString("result")
+
+                                // Display according to your rule
+                                if (verdict.equals("safe", ignoreCase = true)) {
+                                    resultText.text = "✅ Safe"
+                                } else {
+                                    resultText.text = "❌ Phishing link"
+                                }
+
                             } catch (e: Exception) {
-                                resultText.text = "⚠️ Parsing error."
+                                resultText.text = "⚠️ Invalid response"
                             }
                         }
                     }
                 }
             })
         }
-
-      
-        copyButton.setOnClickListener {
-            val textToCopy = resultText.text.toString()
-            if (textToCopy.isNotEmpty()) {
-                val clipboard = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                val clip = android.content.ClipData.newPlainText("Phishing Result", textToCopy)
-                clipboard.setPrimaryClip(clip)
-                Toast.makeText(this, "Result copied!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "No result yet!", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-     
-        shareButton.setOnClickListener {
-            val textToShare = resultText.text.toString()
-            if (textToShare.isNotEmpty()) {
-                val sendIntent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, textToShare)
-                    type = "text/plain"
-                }
-                startActivity(Intent.createChooser(sendIntent, "Share via"))
-            } else {
-                Toast.makeText(this, "No result yet!", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 }
+
+
