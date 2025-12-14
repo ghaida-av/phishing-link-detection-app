@@ -1,100 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Phishing Link Detection App</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body { font-family: Arial, sans-serif; padding: 30px; background: #f6f8fa; }
-    h1 { text-align: center; }
-    input, button { width: 100%; padding: 10px; margin-top: 15px; border-radius: 8px; }
-    input { border: 1px solid #ccc; }
-    button { border: none; background: #007BFF; color: white; }
-    button:hover { background: #0056b3; cursor: pointer; }
-    pre { background: #fff; padding: 15px; border-radius: 8px; margin-top: 20px; overflow-x: auto; }
-    ul { background: #fff; border-radius: 8px; padding: 10px; }
-  </style>
+<meta charset="UTF-8">
+<title>Phishing Link Detection</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #0d6efd; /* BLUE background */
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .card {
+    background: white;
+    width: 90%;
+    max-width: 400px;
+    padding: 25px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  }
+
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  }
+
+  button {
+    margin-top: 15px;
+    width: 100%;
+    padding: 12px;
+    background: white;      /* WHITE button */
+    color: #0d6efd;
+    border: 2px solid #0d6efd;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #f1f1f1;
+  }
+
+  .result {
+    margin-top: 20px;
+    font-size: 22px;
+    font-weight: bold;
+  }
+
+  .safe {
+    color: green;
+  }
+
+  .phishing {
+    color: red;
+  }
+</style>
 </head>
+
 <body>
-  <h1>hishing Link Detection App</h1>
 
-  <input id="urlInput" placeholder="Enter the URL" />
-  <button onclick="checkUrl()">Check</button>
+<div class="card">
+  <h2>Phishing Link Detection</h2>
 
-  <button id="copyButton" onclick="copyResult()"> Copy Result</button>
-  <button id="shareButton" onclick="shareResult()">🔗 Share Result</button>
+  <input id="urlInput" placeholder="Enter URL to check">
 
-  <pre id="result">Result appears here</pre>
+  <button onclick="checkUrl()">Check URL</button>
 
-  <h3>Recent Checks</h3>
-  <ul id="historyList"></ul>
+  <div id="result" class="result"></div>
+</div>
 
-  <script>
-    async function checkUrl() {
-      const url = document.getElementById("urlInput").value.trim();
-      const resultEl = document.getElementById("result");
-      const historyEl = document.getElementById("historyList");
+<script>
+async function checkUrl() {
+  const url = document.getElementById("urlInput").value.trim();
+  const result = document.getElementById("result");
 
-      if (!url) {
-        resultEl.textContent = "Enter the URL.";
-        return;
+  if (!url) {
+    result.textContent = "Enter a URL";
+    result.className = "result phishing";
+    return;
+  }
+
+  result.textContent = "Checking...";
+  result.className = "result";
+
+  try {
+    const response = await fetch(
+      "https://YOUR-GLOBAL-HOST/predict",   
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: url })
       }
+    );
 
-      resultEl.textContent = "Checking...";
-      try {
-        const resp = await fetch("http://localhost:5001/predict", {   
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url })
-        });
-        const data = await resp.json();
-        resultEl.textContent = JSON.stringify(data, null, 2);
+    const data = await response.json();
 
-        
-        let history = JSON.parse(localStorage.getItem("history") || "[]");
-        history.unshift({ url, verdict: data.verdict, score: data.score });
-        if (history.length > 5) history = history.slice(0, 5);
-        localStorage.setItem("history", JSON.stringify(history));
-
-       
-        historyEl.innerHTML = history
-          .map(h => `<li>${h.url} — <b>${h.verdict}</b> (score: ${h.score})</li>`)
-          .join("");
-
-      } catch (err) {
-        resultEl.textContent = "Error: " + err.message;
-      }
+    if (data.verdict === "phishing") {
+      result.textContent = "Phishing ❌";
+      result.className = "result phishing";
+    } else {
+      result.textContent = "Safe ✅";
+      result.className = "result safe";
     }
 
-   
-    window.onload = () => {
-      const historyEl = document.getElementById("historyList");
-      const history = JSON.parse(localStorage.getItem("history") || "[]");
-      historyEl.innerHTML = history
-        .map(h => `<li>${h.url} — <b>${h.verdict}</b> (score: ${h.score})</li>`)
-        .join("");
-    };
+  } catch (error) {
+    result.textContent = "Server error";
+    result.className = "result phishing";
+  }
+}
+</script>
 
-   
-    async function copyResult() {
-      const text = document.getElementById("result").textContent.trim();
-      if (!text) return alert("No result to copy!");
-      await navigator.clipboard.writeText(text);
-      alert(" Result copied to clipboard");
-    }
-
-    async function shareResult() {
-      const text = document.getElementById("result").textContent.trim();
-      if (!text) return alert("No result to share!");
-      if (navigator.share) {
-        await navigator.share({
-          title: "hishing Link Detection App Result",
-          text: text,
-        });
-      } else {
-        alert("Sharing not supported in this browser.");
-      }
-    }
-  </script>
 </body>
 </html>
+
+
