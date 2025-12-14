@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "🚀 GitHub Setup Script"
-echo "======================"
+echo "🚀 GitHub Setup Script for Phishing Link Detection App"
+echo "====================================================="
 echo ""
 
 # 1. Check if Git is installed
@@ -12,7 +12,7 @@ fi
 echo "✅ Git is installed"
 echo ""
 
-# 2. Check if inside a Git repo
+# 2. Initialize Git repo if not present
 if [ -d ".git" ]; then
     echo "✅ Git repo already initialized"
     git status --short | head -5
@@ -35,7 +35,7 @@ else
 fi
 echo ""
 
-# 4. Check commits
+# 4. Check for commits
 if [ -z "$(git log --oneline -1 2>/dev/null)" ]; then
     echo "📝 No commits yet."
     echo "Run:"
@@ -43,7 +43,7 @@ if [ -z "$(git log --oneline -1 2>/dev/null)" ]; then
     echo "  git commit -m 'Initial commit'"
     echo "  git push -u origin main"
 else
-    echo "✅ Commits found:"
+    echo "✅ Last commit:"
     git log --oneline -1
 fi
 echo ""
@@ -62,9 +62,9 @@ else
 fi
 echo ""
 
-# 6. Check GitHub Actions workflow
+# 6. Check for GitHub Actions workflow (optional for Android build)
 if [ -f ".github/workflows/build-apk.yml" ]; then
-    echo "✅ GitHub Actions workflow found at:"
+    echo "✅ GitHub Actions workflow found:"
     echo "   .github/workflows/build-apk.yml"
 else
     echo "⚠️  No GitHub Actions workflow found"
@@ -75,17 +75,18 @@ echo "━━━━━━━━━━━━━━━━━━━━━━"
 echo "📘 Next Steps"
 echo "━━━━━━━━━━━━━━━━━━━━━━"
 echo "1. Create a new repo on GitHub."
-echo "2. Connect it with:"
+echo "2. Connect it:"
 echo "   git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git"
 echo "3. Push your code:"
 echo "   git add ."
 echo "   git commit -m 'Initial commit'"
 echo "   git push -u origin main"
-echo "4. Go to GitHub → Actions → Run workflow"
-echo "5. Download APK from Artifacts"
+echo "4. (Optional) Set up GitHub Actions to automate Android build and ML deployment"
+echo "5. (Optional) Download APK or ML artifacts from GitHub Actions artifacts"
 echo ""
 
 echo "✅ Setup Complete!"
+
 
 
 
