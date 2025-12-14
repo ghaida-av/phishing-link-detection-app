@@ -1,66 +1,62 @@
 #!/bin/bash
 
-show_android_studio_instructions() {
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "💡  Use Android Studio "
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+show_android_studio_help() {
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "📱 Build APK using Android Studio"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
-    echo "📋 Simple Steps:"
-    echo "   1. Open Android Studio"
-    echo "   2. File → Open → Select 'android-client' folder"
-    echo "   3. Wait for Gradle sync to finish"
-    echo "   4. Press Cmd+F9 (Mac) "
-    echo "   5. Find APK: Right-click 'app' folder → Show in Finder"
-    echo "      Navigate to: build/outputs/apk/debug/app-debug.apk"
-    echo ""
-    echo "📖 See ANDROID_PHONE_SETUP.md for detailed instructions"
+    echo "1️⃣ Open Android Studio"
+    echo "2️⃣ File → Open → select 'android-client' folder"
+    echo "3️⃣ Wait for Gradle sync"
+    echo "4️⃣ Press Build → Build APK"
+    echo "5️⃣ APK location:"
+    echo "   android-client/app/build/outputs/apk/debug/app-debug.apk"
     echo ""
 }
 
-echo "🚀 Building Phishing Detection App APK..."
+echo " Building Phishing Link Detection App (Android APK)"
 echo ""
 
-cd "$(dirname "$0")/android-client"
+cd "$(dirname "$0")/android-client" || {
+    echo "❌ android-client folder not found"
+    exit 1
+}
 
-# Check if gradlew exists and is executable
+# Check Gradle wrapper
 if [ ! -f "./gradlew" ]; then
-    echo "❌ Gradle wrapper not found."
-    echo ""
-    show_android_studio_instructions
+    echo "❌ Gradle wrapper missing"
+    show_android_studio_help
     exit 1
 fi
 
-# Make gradlew executable
 chmod +x ./gradlew
 
-echo "📦 Building APK  may take a few minutes"
+echo " Building APK (this may take a few minutes)..."
 echo ""
 
-# Build the APK
-./gradlew assembleDebug 2>&1 | tee /tmp/gradle_build.log
+./gradlew assembleDebug
 
 if [ $? -eq 0 ]; then
     echo ""
-    echo "✅ BUILD SUCCESSFUL!"
+    echo "✅ APK BUILD SUCCESSFUL"
     echo ""
-    echo "📱  APK is located at:"
-    echo "   $(pwd)/app/build/outputs/apk/debug/app-debug.apk"
-    echo ""
-    
-    # Try to open the folder (Mac)
+    echo " APK location:"
+    echo "   android-client/app/build/outputs/apk/debug/app-debug.apk"
+
+    # Open folder on macOS
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        echo "📂 Opening APK folder..."
-        open app/build/outputs/apk/debug/ 2>/dev/null || true
+        open app/build/outputs/apk/debug/
     fi
-    
-    echo "📲 To install on your phone:"
-    echo "   1. Copy app-debug.apk to  phone"
-    echo "   2. Enable 'Install from Unknown Sources' in Settings"
-    echo "   3. Open the APK file and install"
+
+    echo ""
+    echo " Install on Android:"
+    echo "1. Copy APK to phone"
+    echo "2. Enable 'Install unknown apps'"
+    echo "3. Tap APK to install"
 else
     echo ""
-    echo "❌ Command-line build failed "
-    echo ""
-    show_android_studio_instructions
+    echo "❌ Build failed"
+    show_android_studio_help
 fi
+
 
