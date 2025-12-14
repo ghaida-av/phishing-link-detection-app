@@ -1,2 +1,24 @@
-web: python app.py
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+
+def check_url(url):
+    phishing_words = ["login", "verify", "bank", "secure", "update"]
+    for word in phishing_words:
+        if word in url.lower():
+            return "Phishing link ❌"
+    return "Safe ✅"
+
+@app.route("/check", methods=["POST"])
+def check():
+    data = request.get_json()
+    url = data.get("url", "")
+
+    result = check_url(url)
+    return jsonify({"result": result})
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
 
