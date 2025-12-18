@@ -1,37 +1,27 @@
-import androidx.appcompat.app.AppCompatActivity;
+package com.example.phishing
 
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 
-public class MainActivity extends AppCompatActivity {
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-    EditText edtLink;
-    Button btnCheck;
-    TextView txtResult;
+        val linkEditText = findViewById<EditText>(R.id.edtLink)
+        val checkButton = findViewById<Button>(R.id.btnCheck)
+        val resultTextView = findViewById<TextView>(R.id.txtResult)
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        edtLink = findViewById(R.id.edtLink);
-        btnCheck = findViewById(R.id.btnCheck);
-        txtResult = findViewById(R.id.txtResult);
-
-        btnCheck.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String link = edtLink.getText().toString();
-                // For simplicity, let's just check if the link contains the word 'phishing'
-                if (link.contains("phishing")) {
-                    txtResult.setText("Phishing!");
-                } else {
-                    txtResult.setText("Safe!");
-                }
+        checkButton.setOnClickListener {
+            val link = linkEditText.text.toString()
+            if (link.contains("phish")) {
+                resultTextView.text = "Phishing!"
+            } else {
+                resultTextView.text = "Safe!"
             }
-        });
+        }
     }
 }
