@@ -1,18 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
-    <string name="app_name">Phishing Link Detector App</string>
-
-    
-    <string name="enter_url">Enter URL</string>
-    <string name="check_url">Check URL</string>
-
-    
-    <string name="safe_result">✅ Safe</string>
-    <string name="phishing_result">❌ Phishing link</string>
-    <string name="checking">Checking...</string>
-    <string name="error_network">⚠️ Network error</string>
-    <string name="error_server">⚠️ Server error</string>
-    <string name="error_invalid">⚠️ Invalid response</string>
+    <string name="app_name">Phishing Detector</string>
 </resources>
 
