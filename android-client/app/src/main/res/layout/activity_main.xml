@@ -2,34 +2,42 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#3F51B5"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="#1E90FF"
-    android:padding="24dp">
+    android:padding="20dp">
 
     <EditText
         android:id="@+id/urlInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter URL"
-        android:inputType="textUri"
-        android:padding="10dp"
-        android:background="@android:color/white" />
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/white"
+        android:hint="Paste Link Here"
+        android:padding="15dp" />
 
     <Button
         android:id="@+id/checkButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Check URL"
-        android:textColor="#1E90FF"
-        android:background="@android:color/white"
-        android:layout_marginTop="16dp" />
+        android:text="CHECK LINK" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginTop="10dp"/>
 
     <TextView
         android:id="@+id/resultText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        android:layout_marginTop="30dp" />
+        android:layout_marginTop="30dp"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="Result will appear here"
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
 </LinearLayout>
